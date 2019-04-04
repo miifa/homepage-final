@@ -1,0 +1,27 @@
+<nav>
+  <ul>
+    <li><a class="game-link BG2" href="">連珠 </a></li>
+    <li><a class="game-link othello" href="">オセロ </a></li>
+    <li><a class="game-link CC" href="">神経衰弱</a></li>
+  </ul>
+</nav>
+
+<script>
+  $(".res").on("click", e => {
+    e.preventDefault();
+    $("main").load("./games/game.html");
+  });
+  $(".game-link").on("click", e => {
+    e.preventDefault();
+    $(".game-link").removeClass("disabled");
+    let clickedGame = e.target;
+    let gameName = clickedGame.className.split(" ")[1];
+    clickedGame.className += " " + "disabled";
+    console.log(gameName);
+    location.href = `./game-items/${gameName}.html`;
+    // $("#exporter").load(`./contents/games/game-items/${gameName}.html`);
+  });
+  $("#retry").click(function() {
+    $("#display").load("./games/game-items/BG.html");
+  });
+</script>

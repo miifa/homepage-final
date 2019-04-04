@@ -1,0 +1,98 @@
+<!-- command+shift+p:open server -->
+<!DOCTYPE html>
+<html lang="ja">
+    <head>
+        <link rel="stylesheet" href="">
+        <meta charset="UTF-8" />
+        <title>Gomoku</title>
+        <script src="http://cdn.jsdelivr.net/npm/vue"></script>
+        <!-- <meta name="viewport" content="width=device-width, initial-scale=1.0"> -->
+        <!-- <meta http-equiv="X-UA-Compatible" content="ie=edge"> -->
+    
+        <link
+        rel="stylesheet"
+        href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
+        crossorigin="anonymous"
+      />
+      <script src="http://cdn.jsdelivr.net/npm/vue"></script>
+      <link rel="stylesheet" href="./stylesheets/normalize.css">
+      <link rel="stylesheet" href="./stylesheets/index.css">
+    
+      <!-- Optional JavaScript -->
+      <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+      <!-- basic jquery -->
+      <script
+        src="https://code.jquery.com/jquery-3.3.1.js"
+        integrity="sha256-2Kok7MbOyxpgUVvAk/HJ2jigOSYS2auK4Pfzbm7uH60="
+        crossorigin="anonymous"
+      ></script>
+    
+      <script
+        src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+        integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+        crossorigin="anonymous"
+      ></script>
+      <script
+        src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+        integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+        crossorigin="anonymous"
+      ></script>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+        <script type="text/javascript" src="./../../../template.js"></script>
+      </head>
+  <head>
+    <script src="http://cdn.jsdelivr.net/npm/vue"></script>
+    <meta charset="UTF-8" />
+    <style>
+      a.disabled {
+        pointer-events: none;
+      }
+    </style>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Document</title>
+  </head>
+  <header><script>header("./../../../shared/");</script></header>
+  <body>
+    <div id="game" class="container-fluid">
+      <div class="row">
+        <aside class="col-3"></aside>
+        <!-- <div class="col-2"><button id="retry">AAA</button><div id= "display"></div></div> -->
+        <main class="col-9">
+          <div id="exporter">
+            ここにゲームが ひょうじされます
+          </div>
+        </main>
+      </div>
+    </div>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script>aside("./../../../shared/");</script>
+    <script>
+      
+      // $(function(){
+      //   $("aside").load("./shared/_aside.html");
+      // })
+      
+      //  .game-link.##.on("click",function (event,##){
+      //  event.preventdefault();
+      //   $(".game-link").removeClass("disabled");
+      //   renderGame(##)
+      //   } );
+      //function renderGame(gameName){ $(`.game-link.${##}`).addClass("disabled"); }
+    </script>
+    <style>
+      .game-link{
+        color: black;
+        line-height: 110px;
+        padding-left: 10px;
+        font-size: 30px;
+        font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif
+      }
+      #exporter{
+        padding: 20px;
+      }
+    </style>
+  </body>
+</html>

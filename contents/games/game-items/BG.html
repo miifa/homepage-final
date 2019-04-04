@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <link rel="stylesheet" href="BG.css">
+        <meta charset="UTF-8" />
+        <title>Gomoku</title>
+        <script src="http://cdn.jsdelivr.net/npm/vue"></script>
+        <!-- <meta name="viewport" content="width=device-width, initial-scale=1.0"> -->
+        <!-- <meta http-equiv="X-UA-Compatible" content="ie=edge"> -->
+    
+        <link
+        rel="stylesheet"
+        href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
+        crossorigin="anonymous"
+      />
+      <script src="http://cdn.jsdelivr.net/npm/vue"></script>
+      <link rel="stylesheet" href="./stylesheets/normalize.css">
+      <link rel="stylesheet" href="./stylesheets/index.css">
+    
+      <!-- Optional JavaScript -->
+      <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+      <!-- basic jquery -->
+      <script
+        src="https://code.jquery.com/jquery-3.3.1.js"
+        integrity="sha256-2Kok7MbOyxpgUVvAk/HJ2jigOSYS2auK4Pfzbm7uH60="
+        crossorigin="anonymous"
+      ></script>
+    
+      <script
+        src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+        integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+        crossorigin="anonymous"
+      ></script>
+      <script
+        src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+        integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+        crossorigin="anonymous"
+      ></script>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+        <script type="text/javascript" src="./../../../template.js"></script>
+      </head>
+  <body id="BG">
+      <header>
+          <!-- ここにheaderを表示
+          -->
+          <script>header("./../../../shared/");</script>
+        </header>
+        <aside>
+            <!-- <script>aside("./../../../shared/");</script> -->
+        </aside>
+        <main>
+          <!-- ここに各コンテンツをひょうじ -->
+          
+          <div id="endy_gomoku">
+              <ul class="bord">
+                <li
+                  class="bord__cell"
+                  v-for="(cell,index) in bord.CellList"
+                  
+                  v-on:click="cnt++; bord.setStone(index,1); bot.setStone(bord,index);"
+                >
+                <div class="pp">
+                  <div class="tate"></div>
+                  <div class="yoko"></div>
+                </div>
+                  
+                  <span class="cell" v-if="cell.stone==1">○</span><!-- 白 -->
+                  <span class="cell" v-if="cell.stone==2">●️</span><!-- 黒 -->
+                  <span class="db">{{ index }}</span>
+                  <!-- <span >{{ cnt }}</span> -->
+                  
+                </li>
+              </ul>
+              <div class="ren" v-if="fin==1">
+                <span v-if="ss==2 && reason==1">黒の勝ち！！（黒：五連）</span>
+                <span v-if="ss==1 && reason==1">白の勝ち！！（白：五連）</span>
+                <span v-if="ss==2 && reason==2">白の勝ち！！ (黒禁手：長連)</span>
+                <span v-if="ss==2 && reason==3">白の勝ち！！ (黒禁手：三三)</span>
+                <span v-if="ss==2 && reason==4">白の勝ち！！ (黒禁手：四四)</span>
+              </div>
+              <div><input class="change" type="button" value="先攻に変更" onclick="location.href='./BG2.html'"></div>
+              <div v-if="fin==1"><input  class="retry" type="button" value="もう一度" onclick="window.location.reload();" /></div>
+              <div v-if="fin==0"><input  class="retire" type="button" value="中断" onclick="window.location.reload();" /></div>
+              <!-- <button v-on:click="reverseMessage">Reverse Message</button> -->
+            </div>
+            
+            
+        </main>
+        <footer>
+          <!-- ここにfooterをひょうじ -->
+        </footer>
+ 
+
+    <script>
+      class Bord {
+        constructor(x, y) {
+          this.cellList = {};
+          [...Array(x * y).keys()].forEach(n => {
+            this.cellList[n] = { stone: 0 };
+            if(n==112) this.cellList[n] = { stone: 2 };
+          });
+          //   console.log(this.cellList);
+        }
+        get CellList() {
+          return this.cellList;
+        }
+        setStone(index, n) {
+          set = 0;
+          if (this.cellList[index].stone != 0) return;
+          set = 1;
+          this.cellList[index].stone = n;
+          var sticks = [0, 0, 0, 0, 0, 0]; //2:3:4:逹4:5:6以上
+          this.judge_game(index, n, sticks);
+             if(fin>0){
+              return;
+              }
+          if (sticks[4] > 0) {
+            fin = 1;
+            reason= 1;
+            ss = n;
+          } else if (sticks[5] > 0 && n==2) {
+            fin = 1;
+            reason=2;
+            ss = n;
+          } else if (sticks[1]>=2 && n==2){
+            fin = 1;
+            reason= 3;
+            ss = n;
+          } else if(sticks[2]>=2 && n==2){
+            fin= 1;
+            reason= 4;
+            ss = n;
+          }
+        }
+        judge_game(index, n, sticks) {
+          this.cellList[index].stone = n;
+          var a = new Array(9);
+          var b = new Array(9);
+          var c = new Array(9);
+          var d = new Array(9);
+          for (var i = 0; i < 9; i++) {
+            if (i == 4) continue;
+            if (i == 0 || i == 8) make_stick(this.cellList, index, a, i);
+            if (i == 1 || i == 7) make_stick(this.cellList, index, b, i);
+            if (i == 2 || i == 6) make_stick(this.cellList, index, c, i);
+            if (i == 3 || i == 5) make_stick(this.cellList, index, d, i);
+          }
+          judge_3456(sticks, a, n);
+          judge_3456(sticks, b, n);
+          judge_3456(sticks, c, n);
+          judge_3456(sticks, d, n);
+
+          // console.log(a);
+          // console.log(b);
+          // console.log(c);
+          // console.log(d);
+          // if(n==1 && sticks[0]!=0 && sticks[1]!=0) console.log(sticks);
+
+        }
+      }
+
+      class Bot {
+        constructer(bord) {
+          this.bord = bord;
+        }
+        setStone(bord, index) {
+          if (set == 0) return;
+          const bordCellList = bord.CellList;
+          var sticks = [0, 0, 0, 0, 0, 0]; //2:3:4:逹4:5:6以上
+          var sel= [];
+          var selT= [];
+          let ans;
+          let st= 2; //bot先行黒：２
+
+  
+          sel= sel_set_1(bord, st ,sel);
+          console.log(sel);
+          // 確定場所
+          // if(-3 <= sel[sel.length-1] && sel[set.length-1] <= -1){
+          //   bord.setStone(sel[0], st);//訂正
+          //   return;
+          // }
+          var cnt= 0;
+          //序盤は先読み制限
+
+          var chain= [];
+          var final= 0;
+          //先読み
+          // for(var i=0; i<sel.length-1; i++){
+          //   bordCellList[sel[i]].stone= st;
+          //   chain.push(sel[i]);
+          //   final= sel_expect(bord,st,selT,cnt,chain);
+          //   bordCellList[sel[i]].stone= 0;
+          //   //勝利の見込みが出たらbreak
+          //   if(final==1){
+          //     ans= sel[i];
+          //     break;
+          //   }
+          //   chain= [];
+          // }
+          
+          if(sel[sel.length-1]==-7){
+            ans= sel[doubleread(bord,sel,st)];
+          } else{
+            if(final==0) ans= sel[scoremax_calc(bord,sel,st)[1]];
+          }
+            
+            // console.log(ans);
+          // }
+          
+          bord.setStone(ans, st);//訂正
+          return;
+        }
+      }
+
+      function sel_set_1(bord,st,sel){
+        var w_one= []; //-1:この一手で勝利
+        var l_one= []; //-2:ここに置かないと次負ける 
+        var w_two= []; //-3:次の番に勝ち(逹４,44,34作れる)
+        // var w_33= []; //-433（ここおけば有利状況維持
+        var l_two= []; //-4:ここ置かれると負け確定(逹四,34)
+        var w_rush= []; //-5:ここに置くと相手は２択にw_rushl_とrushの順番を逆にすると性格が変わる。
+        var l_rush= []; //-6:ここに置かないと自分は２択以下のところに置かれる。
+        var w_other= []; //-7:2,3,4になる見込み
+        var l_other= []; //-8:2,3,4になる見込み
+        //人間vsbot：botは基本的に最善手かつミスをしないような立ち回りをする。
+        // したがって序盤は様子見（守りの姿勢）となることが多い。
+        // そこで今回は、守りから序盤から攻めていき、最善ではなく最短で勝てるようなアルゴリズムを考える。
+
+
+        for(var i=0; i<225; i++){
+          if(bord.CellList[i].stone!=0) continue;
+          var sticks= [0,0,0,0,0,0];
+          //自分目線
+          bord.judge_game(i,st,sticks);
+          bord.CellList[i].stone=0;
+          console.log(i+":自分視点"+sticks);
+          if(sticks[4]>=1 || sticks[5]>=1){
+            w_one.push(i);
+            if(st==2 && sticks[5]>=1){
+              w_one.pop();
+            }
+          } else if(((sticks[1]>=1 && sticks[2]>=1)|| sticks[1]>=2 || sticks[2]>=1 || sticks[3]>=1)){
+            w_two.push(i);
+            if(st==2 && sticks[2]>=2 || st==2 && sticks[1]>=2){
+              w_two.pop();
+            }
+          } 
+          else if(sticks[1]>=1 || sticks[2]==1){
+            w_rush.push(i);
+            if(st==2 && sticks[1]>=2){
+              w_rush.pop();
+            }
+          } else if(sticks[0]>=1){
+            w_other.push(i);
+          }
+          //敵目線
+          sticks= [0,0,0,0,0,0];
+          bord.judge_game(i,st%2+1,sticks);
+          bord.CellList[i].stone=0;
+          console.log(i+":敵視点"+sticks);
+          if(sticks[4]>=1 || sticks[5]>=1){
+            l_one.push(i);
+            if(st==1 && sticks[5]>=1){
+              l_one.pop();
+            }
+          } else if((sticks[1]>=1 && sticks[2]>=1) || sticks[1]>=2 || sticks[2]>=1 || sticks[3]>=1){
+            l_two.push(i);
+            if(st==1 && sticks[2]>=2 || st==1 && sticks[1]>=2){
+              l_two.pop();
+            }
+          } else if(sticks[1]>=1 || sticks[2]==1){
+            l_rush.push(i);
+            if(st==1 && sticks[1]>=2){
+              l_rush.pop();
+            }
+          } else if(sticks[0]>=1){
+            l_other.push(i);            
+          }
+        }
+        if(w_one.length>0){
+          w_one.push(-1);//訂正
+          sel= w_one.slice(0, w_one.length);
+          return sel;
+        }else if(l_one.length>0){
+          l_one.push(-2);//訂正
+          sel= l_one.slice(0, l_one.length);
+          return sel;
+        }else if(w_two.length>0){
+          w_two.push(-3);//訂正
+          sel= w_two.slice(0, w_two.length);
+          return sel; 
+        } 
+        // else if(w_remain.length>0){
+        //   w_remain.push(-3.5);//訂正
+        //   sel= w_remain.slice(0, w_remain.length);
+        //   if(l_two.length!=0) {return sel;} 
+        // }
+         else if(l_two.length>0){
+          l_two.push(-4);//訂正
+          sel= l_two//.slice(0, l_two.length);
+          return sel; 
+        } else if(w_rush.length>0){
+          w_rush.push(-5);//訂正
+          sel= w_rush//.slice(0, w_rush.length);
+          return sel; 
+        } else if(l_rush.length>0){
+          l_rush.push(-6);//訂正
+          sel= l_rush//.slice(0, l_rush.length);
+          return sel; 
+        } 
+        else if(w_other.length>0){
+          w_other.push(-7);//訂正
+          sel= w_other//.slice(0, w_other.length);
+          return sel;
+        } else if(l_other.length>0){
+          l_other.push(-8);//訂正
+          sel= l_other//.slice(0, w_other.length);
+          return sel;
+        }
+      }
+      function sel_expect(bord,st,sel,cnt,chain){
+        var key;
+        var final;
+        if(sel[sel.length-1]==-1 || sel[sel.length-1]==-3){
+          final= 1;
+          return final;
+        }
+        else if(sel[sel.length-1]!=-5 && sel[sel.length-1]!=-6){
+          final= 0;
+          return final;
+        }
+        // var max_step= 0;
+        // a= sel_set_1(bord,st,a);
+        for(var i=0; i<sel.length-1; i++){
+          chain.push(i);
+          bord.CellList[sel[i]].stone= st;
+          chain.push(sel[i]);
+          a= sel_set_1(bord,st%2+1,a);                                                                                                                                                     
+          for(var j=0; j<a.length-1; j++){
+            bord.CellList[sel[j]].stone= st%2+1;
+            chain.push(sel[j]);
+            a= [];
+            final= sel_expect(bord,st,a,cnt,chain);
+          }
+        }
+      }
+      function doubleread(bord,sel,st){
+        var sel2= [];
+        var sel3= [];
+        var min_x= 0;
+        var min= 100;
+        var maxB=-100;
+        var Bscore=0;
+        // var max_rank= sel[sel.length-1];
+        // if(sel.length==2) return 0;
+        for(var i=0; i< sel.length-1; i++){//訂正
+          //仮にsel[i]に置き、
+          var a= sel[i];
+          bord.CellList[a].stone= st;
+          sel2= sel_set_1(bord,st%2+1,sel2);
+          // console.log("黒置き点数");
+          var sel2_good= scoremax_calc(bord,sel2,st%2+1);//黒
+          var b= sel2[sel2_good[1]];
+          bord.CellList[b].stone= st%2+1;
+          sel3= sel_set_1(bord,st,sel3); 
+          // console.log("白置き点数");
+          Bscore= scoremax_calc(bord,sel3,st);
+          if(maxB< Bscore[0]+sel2_good[0]){
+            maxB= Bscore[0]+sel2_good[0];
+            min_x= i;
+          } 
+          // console.log(i+":");
+          // console.log(sel2);
+          // console.log("黒："+sel2[sel2_good[1]]);
+          // console.log("今の所："+sel[min_x]);
+          // console.log(sel3);
+          // console.log(sel2);
+          console.log(sel[i]+":"+Bscore[0]+"点  ");
+          bord.CellList[a].stone= 0;
+          bord.CellList[b].stone= 0;
+          sel2= [];
+          sel3= [];
+          
+        }
+        return min_x;
+      }
+   
+      function scoremax_calc(boad,sel,st){
+        var max= 0;
+        var max_x= -1;
+        var score= 0;
+        for(var i=0; i< sel.length-1; i++){//訂正
+          var sticks= [0,0,0,0,0,0];
+          bord.judge_game(sel[i],st,sticks);
+          // console.log(sticks+":"+st);
+          bord.CellList[sel[i]].stone=0;
+          // if(sticks[0]>2) sticks[0]= 2;
+          score= sticks[0]*0.2 +sticks[1]*2 +sticks[2]*2.5 +sticks[3]*4.5 +sticks[4]*10;
+          
+    
+            sticks= [0,0,0,0,0,0];
+            bord.judge_game(sel[i],st%2+1,sticks);
+            bord.CellList[sel[i]].stone=0;
+            // if(sticks[0]>2) sticks[0]= 2;
+            // if(score<sticks[0]*0.1 +sticks[1]*1.6 +sticks[2]*2.5 +sticks[3]*4.5 +sticks[4]*9){
+              score+= sticks[0]*0.09 +sticks[1]*1.6 +sticks[2]*2.5 +sticks[3]*4.5 +sticks[4]*9;
+          //  }  
+          
+          
+          console.log(sel[i]+":"+score+"点");
+          if(max <= score){
+            max= score;
+            max_x= i;
+          }
+          // console.log("->"+max+"点");
+        }
+        var ans= [max,max_x];
+        return ans;
+      }
+
+  
+      function culc(x, i) {
+        x = parseInt(x);
+        const f = x + ((i - (i % 3)) / 3 - 1) * 15 + ((i % 3) - 1);
+        return f;
+      }
+
+      function make_stick(list, x, stick, i) {
+        const st = list[x].stone;
+        if (i < 4) stick.fill(-1);
+        stick[4] = st;
+
+        for (var j = 0; j < 4; j++) {
+          let old_x = x;
+          if (
+            (old_x % 15 == 0 && i % 3 == 0) ||
+            (old_x % 15 == 14 && i % 3 == 2)
+          ) {
+            //壁際の時、アクセスはできるが八方向上でないアクセスはbreak
+            break;
+          }
+          x = culc(x, i);
+          if (x < 0 || 15 * 15 <= x) {
+            //アクセス外はbreak
+            break;
+          }
+          if (list[x].stone == st) {
+            if (i < 4) {
+              stick[3 - j] = st;
+            } else if (i > 4) {
+              stick[5 + j] = st;
+            }
+          } else if (list[x].stone == 0) {
+            if (i < 4) {
+              stick[3 - j] = 0;
+            } else if (i > 4) {
+              stick[5 + j] = 0;
+            }
+          } else break;
+        }
+      }
+
+      function judge_3456(sticks, list, st) {
+        var s=0;
+        var t=0;
+        //sticks: 役の個数格納、list:縦横斜めいずれかの棒（要素数９）,st: おいた色
+        var cnt = 0;
+        var max = 0;
+        var cnt_0 = 0;
+        var cnt_st = 0;
+       
+        
+        //５、６判定
+        for (var i_1 = 0; i_1 < 9; i_1++) {
+          if (st == list[i_1]) {
+            cnt++;
+          } else {
+            if (max < cnt) {
+              max = cnt;
+            }
+            cnt = 0;
+          }
+        }
+        if (max < cnt) {
+          max = cnt;
+        }
+        if (max == 5) {
+          sticks[4]++;
+          return;
+        }
+        if (max > 5) sticks[5]++;
+        cnt=0;
+         //長連判定
+         if(st==2){
+          for(var i=0; i<4; i++){
+            cnt_0= 0;
+            cnt_st= 0;
+            cnt= 0;
+            for(var j=i; j<i+6; j++){
+              if(j==i || j==i+5){
+                if(list[j]==st){
+                  cnt++;
+                }
+              }
+              if(list[j]==st){
+                cnt_st++;
+              } else if(list[j]==0){
+                cnt_0++;
+              }
+            }
+            if(cnt_0==1 && cnt_st==5 && cnt==2){
+              return;
+            }
+          }
+         }
+         
+        //逹4、4(偽逹４)判定
+        for (var i_2 = 0; i_2 < 4; i_2++) {
+          cnt = 0;
+          for (j = 0; j < 6; j++) {
+            if (j == 0 || j == 5) {
+              if (list[i_2 + j] == -1) cnt++;
+            } else {
+              if (list[i_2 + j] != st) {
+                cnt = -1;
+                break;
+              }
+            }
+          }            
+          if (cnt == 0) {
+            sticks[2]++;
+            s++;
+            sticks[3]++;  
+          }
+          if (cnt == 1) {
+            sticks[2]++;
+            s++;
+          }
+        }
+        //4判定判定
+        for (var i_2 = 0; i_2 < 5; i_2++) {
+          cnt_0 = 0;
+          cnt_st = 0;
+          for (j = 0; j < 5; j++) {
+            if (j == 0 || j == 4) {
+              if (list[i_2 + j] != st) cnt_0 = 2;
+            } else {
+              if (list[i_2 + j] == 0) {
+                cnt_0++;
+              } else if (list[i_2 + j] == st) {
+                cnt_st++;
+              }
+            }  
+          }
+          if (cnt_0 == 1 && cnt_st == 2) sticks[2]++;
+        }
+        //3判定
+        for (var i_3=0; i_3<4; i_3++){
+          cnt_0= 0;
+          cnt_st= 0;
+          cnt= 0;
+          for(j=0; j<6; j++){
+            if(j==0 || j==5){
+              if (list[i_3 + j] != 0) cnt_0= 2;
+            } else{
+              if(list[i_3+j] == 0){
+                cnt_0++;
+              } else if(list[i_3+j] == st){
+                cnt_st++;
+              }
+            }
+          }
+          if(cnt_0==1 && cnt_st==3){
+            sticks[1]++;
+            t++;
+            i_3++;
+          }
+        }
+
+        //弱３判定
+        var cnt= 0;
+        var cnt_st= 0; 
+        for(var i=3; i>=0; i--){
+          if(list[i]==st){
+            cnt_st++;
+          } else if(list[i]==st%2+1){
+            cnt++;
+            break;
+          }
+        }
+        for(var i=5; i<=8; i++){
+          if(list[i]==st){
+            cnt_st++;
+          } else if(list[i]==st%2+1){
+            cnt++;
+            break;
+          }
+        }
+        if(cnt==1 && cnt_st==2) sticks[0]+=5;
+        // console.log(cnt+":"+cnt_st);
+    
+
+        //2判定（序盤用）
+        for(var i_4=0; i_4<4; i_4++){
+          cnt_0= 0;
+          cnt_st= 0;
+          cnt= 0;
+          for(j=i_4; j<i_4+6; j++){
+            if(j==0 || j==5){
+              if (list[i_4 + j] != 0) cnt= 1;
+            } else{
+              if(list[i_4+j] == 0){
+                cnt_0++;
+              } else if(list[i_4+j] == st){
+                cnt_st++;
+              }
+            }
+          }
+          if(cnt==0 && cnt_0==2 && cnt_st==2){
+            sticks[0]++;
+            break;
+          }
+        }
+        if(list[3]==st && list[5]==0||list[3]==0 && list[5]==st||list[3]==st && list[5]==st){
+          sticks[0]++;
+        }
+        //誤認識調整
+        if(list[2]==0 && list[3]==st && list[5]==st && list[6]==0  && list[7]==st && list[8]==0
+        || list[0]==0 && list[1]==st && list[2]==0  && list[3]==st && list[5]==st && list[6]==0){
+          sticks[1]--;
+        }
+        if(s>=1 && t>=1) sticks[1]-=s;
+
+        
+      }
+  
+
+      var cnt=0;
+      let fin = 0;
+      let reason= 0;
+      let ss = 0;
+      let set;
+      let long = 0;
+      const bord = new Bord(15, 15);
+      const bot = new Bot();
+      
+      // const judge= new Judge();
+      const endy_gomoku = new Vue({
+        el: "#endy_gomoku",
+        data: {
+          bord: bord,
+          bot: bot
+        },
+        methods: {
+          reverseMessage: function() {
+            this.message = this.message
+              .split("")
+              .reverse()
+              .join("");
+          }
+        }
+      });
+    </script>
+    <script>footer("./../../../shared/");</script>
+  </body>
+</html>

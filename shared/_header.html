@@ -1,0 +1,120 @@
+<head>
+    <script
+      src="https://code.jquery.com/jquery-3.3.1.js"
+      integrity="sha256-2Kok7MbOyxpgUVvAk/HJ2jigOSYS2auK4Pfzbm7uH60="
+      crossorigin="anonymous"
+    ></script>
+
+</head>
+<nav
+  class="col-12 navbar navbar-toggleable-md navbar-light navbar-inverse bg-info"
+  style="min-height:60px"
+>
+  <!-- inverse：色反転、light：色明るめ ☝︎なぜかこの時はmdサイズ以下の時toggleつけ-->
+  <button
+    class="navbar-toggler navbar-toggler-right"
+    type="button"
+    data-toggle="collapse"
+    data-target="#navbarSupportedContent"
+    aria-controls="navbarSupportedContent"
+    aria-expanded="false"
+    aria-label="Toggle-navigation"
+  >
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  <div class="collapse navbar-collapse" id="navbarSupportedContent">
+    <ul class="navbar-nav mr-auto">
+      <li class="nav-item active">
+        <a class="nav-link sel home" href="#"
+          >ホーム
+          <span class="sr-only">(current)</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link sel profile" href="#">プロフィール</a>
+      </li>
+      <!-- <li class="nav-item">
+        <a class="nav-link sel game" href="#">ゲーム</a>
+      </li> -->
+
+      <li class="nav-item dropdown">
+          <a
+            class="nav-link dropdown-toggle selb"
+            href="http://example.com"
+            id="navbarDropdownMenuLink"
+            data-toggle="dropdown"
+            aria-haspopup="true"
+            aria-expanded="false"
+          >
+            ゲーム
+          </a>
+          <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+              <a class="dropdown-item sel" href="/contents/games/game-items/BG2.html">連珠</a>
+              <a class="dropdown-item sel" href="#">オセロ</a>
+              <a class="dropdown-item sel" href="#">神経衰弱</a>
+          </div>
+        </li>
+
+      <li class="nav-item dropdown">
+        <a
+          class="nav-link dropdown-toggle selb"
+          href="http://example.com"
+          id="navbarDropdownMenuLink"
+          data-toggle="dropdown"
+          aria-haspopup="true"
+          aria-expanded="false"
+        >
+          ブログ
+        </a>
+        <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+            <a class="dropdown-item sel" href="#">大学生日記</a>
+            <a class="dropdown-item sel" href="#">プログラミング勉強</a>
+        </div>
+      </li>
+    </ul>
+    <!-- <form class="form-inline">
+      <button class="btn btn-outline-info" type="button">Twitter</button>
+    </form>
+    <form class="form-inline my-2 my-lg-0">
+      <div class="input-group">
+        <span class="input-group-addon" id="basic-addon1">@</span>
+        <input class="form-control mr-sm-2" type="text" placeholder="Search" />
+      </div>
+      <button class="btn btn-outline-success my-2 my-sm-0" type="submit">
+        Search
+      </button>
+    </form> -->
+  </div>
+</nav>
+<script>
+  
+  $(".home").on("click", e => {
+        e.preventDefault();
+        window.location.href = "/contents/index.html";
+        // $("main").load("/contents/main.html");
+  });
+  $(".game").on("click", e => {
+    e.preventDefault();
+    window.location.href = "/contents/games/game.html";
+    
+    // $("main").load("/contents/games/game.html");
+  });
+  $(".profile").on("click", e => {
+    e.preventDefault();
+    window.location.href = "/contents/profile.html";
+    
+    // $("main").load("/contents/profile.html");
+  });
+  // $(".sel").on("click", e => {
+  //   e.preventDefault();
+  //   $(".sel").removeClass("disabled");
+  //   let clicked = e.target;
+  //   clicked.className += " " + "disabled";
+  // });
+  // $(".selb").on("click", e => {
+  //   e.preventDefault();
+  //   $(".sel").removeClass("disabled");
+  //   let clicked = e.target;
+  // });
+</script>
